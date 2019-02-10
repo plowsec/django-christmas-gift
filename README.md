@@ -15,3 +15,7 @@ python manage.py runserver
 * Attribute gifts to each person.
 * Each gift has a two status: bought and wrapped.
 * The global view shows statistics about the total cost and the number of gifts to wrap / buy.
+
+# Contributor
+
+https://github.com/jkoestinger
