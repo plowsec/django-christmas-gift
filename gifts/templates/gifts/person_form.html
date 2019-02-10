@@ -1,0 +1,24 @@
+{% extends 'base.html' %} {% block header %}Create person{% endblock %} {% block content %}
+<form action="" method="post" class="ui form">
+    {% csrf_token %}
+    <div class="field">
+        {% if form.name.errors %}
+        <div class="ui negative message">
+            {{ form.name.errors }}
+        </div>
+        {% endif %}
+        <label for="{{ form.name.id_for_label }}">Name:</label>
+        {{ form.name }}
+    </div>
+    <div class="field">
+        {% if form.budget.errors %}
+        <div class="ui negative message">
+            {{ form.budget.errors }}
+        </div>
+        {% endif %}
+        <label for="{{ form.budget.id_for_label }}">Budget:</label>
+        {{ form.budget }}
+    </div>
+    <input class="ui button primary" type="submit" value="Create" />
+</form>
+{% endblock %}

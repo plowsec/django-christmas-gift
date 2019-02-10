@@ -1,0 +1,98 @@
+{% extends 'base.html' %} {% block header %} Details - {{person.name}} {% endblock %} {% block content %}
+<a class="ui button" href="{% url 'gifts:addGift' person.id %}">Add gift</a>
+<a class="ui button primary" href="{% url 'gifts:updatePerson' person.id %}">Edit</a>
+
+{% block javascript %}
+
+<script type="text/javascript">
+
+    function unlockSubmit() {
+        $('#updateButton').prop('disabled', false)
+    }
+
+    $(function () {
+        $('.wrapped-widget').parent().checkbox({
+            onChange: function (e) {
+                unlockSubmit()
+            },
+            onUnchecked: function () {
+                $this = $(this);
+                $tr = $this.closest('tr').removeClass('positive').addClass('warning')
+            },
+            onChecked: function () {
+                $this = $(this);
+                $tr = $this.closest('tr').removeClass('warning').addClass('positive')
+            }
+        });
+
+        $('.bought-widget').parent().checkbox({
+            onChange: function (e) {
+                unlockSubmit()
+            },
+            onUnchecked: function (e) {
+                $this = $(this);
+                $wrappedCB = $this.parent().parent().next().children().children('input');
+                $wrappedCB.prop('checked', false);
+                $wrappedCB.prop('disabled', true);
+                $tr = $this.closest('tr').removeClass('positive').removeClass('warning').addClass('negative')
+            },
+            onChecked: function () {
+                $this = $(this);
+                $wrappedCB = $this.parent().parent().next().children().children('input');
+                $wrappedCB.prop('disabled', false);
+                $tr = $this.closest('tr').removeClass('negative').addClass('warning')
+            }
+        });
+    })
+</script> {% endblock %}
+
+<form action="" method="post" class="ui form">
+    {% csrf_token %}
+    <table class="ui compact celled table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Bought</th>
+                <th>Wrapped</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{form.management_form}} {% for giftForm in form %} {{giftForm.id}}
+            <tr class="{% if not giftForm.bought %}negative{% elif not giftForm.bought %}warning{% else %}positive{% endif %}">
+                <td>{{giftForm.instance.description}}</td>
+                <td>{{giftForm.instance.price}} $</td>
+                <td class="collapsing">
+                    <div class="ui fitted toggle checkbox">
+                        {{giftForm.bought}}
+                    </div>
+                </td>
+                <td class="collapsing">
+                    <div class="ui fitted toggle checkbox">
+                        {{giftForm.wrapped}}
+                    </div>
+                </td>
+                <td>
+                    <a class="ui button primary" href="{% url 'gifts:updateGift' giftForm.instance.id %}">Edit</a>
+                    <a class="ui red button" href="{% url 'gifts:deleteGift' giftForm.instance.id %}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot class="full-width">
+            <tr>
+                <th></th>
+                <th>
+                    <div class="ui small">
+                        <p>Total : {{ total }} $</p>
+                    </div>
+                </th>
+                <th colspan="4">
+                    <input id="updateButton" class="ui button primary right floated" type="submit" value="Update" disabled />
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+</form>
+{% endblock %}
